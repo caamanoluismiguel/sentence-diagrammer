@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Sentence Diagramming Tool</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2"></script>
+  <script src="https://d3js.org/d3.v6.min.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .dark-mode { background-color: #333; color: #fff; }
+    .light-mode { background-color: #fff; color: #000; }
+    textarea { width: 100%; height: 50px; margin: 10px 0; }
+    button { margin: 5px; padding: 5px 10px; }
+    #diagram { border: 1px solid #ccc; margin-top: 20px; }
+  </style>
+</head>
+<body class="light-mode" id="app">
+  <h1>Sentence Diagramming Tool</h1>
+  <div>
+    <label>Your Name:</label>
+    <input type="text" v-model="userName" placeholder="Enter your name">
+  </div>
+  <div>
+    <button @click="mode = 'auto'">Auto-Diagram Any Sentence</button>
+    <button @click="mode = 'practice'">Practice & Learn</button>
+    <button @click="toggleTheme">Toggle Dark/Light Mode</button>
+  </div>
+  
+  <div v-if="mode === 'auto'">
+    <h2>Auto-Diagram Mode</h2>
+    <textarea v-model="sentence" placeholder="Enter a sentence here"></textarea>
+    <button @click="autoDiagram">Diagram It</button>
+    <div id="diagram"></div>
+  </div>
+  
+  <script>
+    new Vue({
+      el: '#app',
+      data: {
+        userName: '',
+        mode: '',
+        sentence: '',
+        theme: 'light-mode'
+      },
+      methods: {
+        toggleTheme() {
+          this.theme = (this.theme === 'light-mode') ? 'dark-mode' : 'light-mode';
+        },
+        autoDiagram() {
+          fetch('/parse', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sentence: this.sentence })
+          })
+          .then(response => response.json())
+          .then(data => {
+            console.log(data);
+          })
+          .catch(err => console.error(err));
+        }
+      }
+    });
+  </script>
+</body>
+</html>
