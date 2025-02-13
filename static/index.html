@@ -33,33 +33,46 @@
     <div id="diagram"></div>
   </div>
   
-  <script>
+ <script>
+  console.log("Vue is loading...");
+
+  window.onload = function() {
+    console.log("Window loaded, initializing Vue...");
+    
     new Vue({
       el: '#app',
       data: {
         userName: '',
         mode: '',
         sentence: '',
+        diagramData: [],
         theme: 'light-mode'
       },
       methods: {
         toggleTheme() {
-          this.theme = (this.theme === 'light-mode') ? 'dark-mode' : 'light-mode';
+          console.log("Theme toggled!");
+          document.body.classList.toggle('dark-mode');
         },
         autoDiagram() {
-          fetch('/parse', {
+          console.log("Button Clicked: Auto-Diagram");
+          fetch(window.location.origin + '/parse', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sentence: this.sentence })
           })
           .then(response => response.json())
           .then(data => {
-            console.log(data);
+            console.log("Response received:", data);
+            alert(JSON.stringify(data, null, 2));  // Debugging alert
           })
-          .catch(err => console.error(err));
+          .catch(err => console.error("Error in fetch:", err));
         }
       }
     });
-  </script>
+
+    console.log("Vue initialized successfully!");
+  };
+</script>
+
 </body>
 </html>
